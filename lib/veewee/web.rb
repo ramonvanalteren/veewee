@@ -5,7 +5,7 @@ module Veewee
     include WEBrick
 
     class FileServlet < WEBrick::HTTPServlet::AbstractServlet
-             
+
               def initialize(server,localfile)
                 super(server)
                 @server=server
@@ -14,7 +14,7 @@ module Veewee
              def do_GET(request,response)
                      response['Content-Type']='text/plain'
                      response.status = 200
-                     puts "Serving file #{@localfile}"                     
+                     puts "Serving file #{@localfile}"
                      displayfile=File.open(@localfile,'r')
                      content=displayfile.read()
                      response.body=content
@@ -22,12 +22,12 @@ module Veewee
                      sleep 2
                      @server.shutdown
              end
-     end 
+     end
 
-    def self.wait_for_request(filename,options={:timeout => 10, :web_dir => "", :port => 7125})  
-      
+    def self.wait_for_request(filename,options={:timeout => 10, :web_dir => "", :port => 7125})
+
       webrick_logger=WEBrick::Log.new("/dev/null", WEBrick::Log::INFO)
-      
+
       web_dir=options[:web_dir]
       filename=filename
       s= HTTPServer.new(
@@ -43,6 +43,6 @@ module Veewee
         }
       s.start
     end
-    
+
   end
 end

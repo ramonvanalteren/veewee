@@ -15,11 +15,11 @@ module Veewee
             return false
           end
         end
-		  rescue Timeout::Error
-	    end
+          rescue Timeout::Error
+        end
 
-	    return false
-	end
+        return false
+    end
 
 
   end #Class

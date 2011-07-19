@@ -47,7 +47,7 @@ module Veewee
 
 
     def self.transfer_file(host,filename,destination = '.' , options = {})
-      
+
       Net::SSH.start( host,options[:user],options ) do |ssh|
         puts "Transferring #{filename} to #{destination} "
         ssh.scp.upload!( filename, destination ) do |ch, name, sent, total|
@@ -55,7 +55,7 @@ module Veewee
           print "."
 
         end
-      end 
+      end
       puts
     end
 
@@ -175,7 +175,7 @@ module Veewee
       rescue Net::SSH::Disconnect, Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Errno::ECONNABORTED, Errno::ECONNRESET, Errno::ENETUNREACH
         sleep 1
       end
-  
+
       if (@status.to_s != options[:exitcode] )
         if (options[:exitcode]=="*")
           #its a test so we don't need to worry

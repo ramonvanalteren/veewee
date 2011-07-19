@@ -3,7 +3,7 @@ module Veewee
 
   def transaction(name,params, &block)
   end
-  
+
   def transaction2(name,options= { :checksum => "nochecksum"}, &block)
      if snapshot_exists(@vmname,name+"-"+options[:checksum])
         load_snapshot_vmachine(@vmname,name+"-"+options[:checksum])
@@ -20,19 +20,19 @@ module Veewee
 
   def self.remove_snapshot_vmachine(vmname,snapname)
     @vboxcmd=Veewee::Session.determine_vboxcmd
-    
+
     Veewee::Shell.execute("#{@vboxcmd} snapshot '#{vmname}' delete '#{snapname}'")
   end
 
   def self.create_snapshot_vmachine(vmname,snapname)
     @vboxcmd=Veewee::Session.determine_vboxcmd
-    
+
     Veewee::Shell.execute("#{@vboxcmd} snapshot '#{vmname}' take '#{snapname}'")
   end
 
   def self.load_snapshot_vmachine(vmname,snapname)
     @vboxcmd=Veewee::Session.determine_vboxcmd
-    
+
     #if it running , shutdown first
     if (state_vmachine(vmname)=="running")
       stop_vmachine(vmname)
@@ -81,8 +81,8 @@ module Veewee
         sleep 1
       end
     }
-    
-    
+
+
      sleep 2
 
       Veewee::Shell.execute("#{@vboxcmd} startvm '#{vmname}'")
@@ -110,7 +110,7 @@ module Veewee
 
     def self.list_snapshots(vmname)
       @vboxcmd=Veewee::Session.determine_vboxcmd
-      
+
       snapshotresult=Veewee::Shell.execute("#{@vboxcmd} showvminfo --machinereadable '#{vmname}' |grep ^SnapshotName| cut -d '=' -f 2").stdout
       snapshotlist=snapshotresult.gsub(/\"/,'').split(/\n/)
       return snapshotlist
@@ -119,4 +119,4 @@ module Veewee
 end
 end
 
-    
+

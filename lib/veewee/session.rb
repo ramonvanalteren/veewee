@@ -796,8 +796,8 @@ module Veewee
           counter=0
 
           while (snapshot!=nil)
-        	  #puts "#{counter}:#{snapshot.name}"
-         	  snapnames[counter]=snapshot.name
+              #puts "#{counter}:#{snapshot.name}"
+              snapnames[counter]=snapshot.name
             counter=counter+1
             snapshot=snapshot.children[0]
           end
@@ -821,7 +821,7 @@ module Veewee
             return
         end
 
-        #puts "Current step: #{current_step_nr}"
+        puts "Current step: #{current_step_nr}"
         if (current_step_nr == last_good_state)
             if vm.running?
               vm.stop
