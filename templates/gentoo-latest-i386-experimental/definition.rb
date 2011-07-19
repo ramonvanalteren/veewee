@@ -6,7 +6,12 @@ Veewee::Session.declare( {
   :iso_src => "http://distfiles.gentoo.org/releases/x86/autobuilds/current-iso/install-x86-minimal-20110726.iso",
   :iso_md5 => "29fc74988e7f86417395e376afc1af47",
   :iso_download_timeout => "1000",
-  :boot_wait => "120",:boot_cmd_sequence => [
+  :boot_wait => "10",:boot_cmd_sequence => [
+        '<Enter><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait>',
+        '<Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait>',
+        '<Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait>',
+        '<Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait>',
+        '<Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait><Wait>',
         'net-setup eth0<Enter>',
         '<Wait><Enter>',
         '2<Enter>',

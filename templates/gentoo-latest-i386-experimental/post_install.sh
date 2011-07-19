@@ -34,7 +34,6 @@ mkswap /dev/sda2
 swapon /dev/sda2
 
 #Mount the new disk
-mkdir /mnt/gentoo
 mount /dev/sda3 /mnt/gentoo
 mkdir /mnt/gentoo/boot
 mount /dev/sda1 /mnt/gentoo/boot
@@ -44,13 +43,13 @@ cd /mnt/gentoo
 
 #Download a stage3 archive
 while true; do
-	wget ftp://distfiles.gentoo.org/gentoo/releases/x86/current-stage3/stage3-i686-*.tar.bz2 && > gotstage3
+    wget --connect-timeout=3 ftp://distfiles.gentoo.org/gentoo/releases/x86/current-stage3/stage3-i686-*.tar.bz2 && > gotstage3
         if [ -f "gotstage3" ]
         then
-		break
-	else
-		echo "trying in 2seconds"
-		sleep 2
+        break
+    else
+        echo "trying in 2seconds"
+        sleep 2
         fi
 done
 tar xjpf stage3*
@@ -58,14 +57,14 @@ tar xjpf stage3*
 #Download Portage snapshot
 cd /mnt/gentoo/usr
 while true; do
-	wget http://distfiles.gentoo.org/snapshots/portage-latest.tar.bz2 && > gotportage
+    wget http://distfiles.gentoo.org/snapshots/portage-latest.tar.bz2 && > gotportage
         if [ -f "gotportage" ]
         then
-		break
-	else
-		echo "trying in 2seconds"
-		sleep 2
-	fi
+        break
+    else
+        echo "trying in 2seconds"
+        sleep 2
+    fi
 done
 
 tar xjf portage-lat*
@@ -84,7 +83,7 @@ echo "emerge gentoo-sources" | chroot /mnt/gentoo /bin/bash -
 # http://www.gentoo.org/doc/en/genkernel.xml
 echo "emerge grub" | chroot /mnt/gentoo /bin/bash -
 echo "emerge genkernel" | chroot /mnt/gentoo /bin/bash -
-echo "genkernel --bootloader=grub --real_root=/dev/sda3 --no-splash --install all" | chroot /mnt/gentoo /bin/bash -
+echo "genkernel --mountboot --symlink --lvm --bootloader=grub --real-root=/dev/sda3 --no-splash --install all" | chroot /mnt/gentoo /bin/bash -
 
 cat <<EOF | chroot /mnt/gentoo /bin/bash -
 cat <<FSTAB > /etc/fstab
@@ -128,9 +127,6 @@ chroot /mnt/gentoo useradd -m -r vagrant -p '$1$MPmczGP9$1SeNO4bw5YgiEJuo/ZkWq1'
 chroot /mnt/gentoo emerge sudo
 echo "echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers" | chroot /mnt/gentoo sh -
 
-#Installing vagrant keys
-chroot /mnt/gentoo emerge wget 
-
 echo "creating vagrant ssh keys"
 chroot /mnt/gentoo mkdir /home/vagrant/.ssh
 chroot /mnt/gentoo chmod 700 /home/vagrant/.ssh
@@ -139,29 +135,20 @@ chroot /mnt/gentoo wget --no-check-certificate 'http://github.com/mitchellh/vagr
 chroot /mnt/gentoo chmod 600 /home/vagrant/.ssh/authorized_keys
 chroot /mnt/gentoo chown -R vagrant /home/vagrant/.ssh
 
-#This could be done in postinstall
-#reboot
-
 #get some ruby running
-chroot /mnt/gentoo emerge git curl gcc automake  m4
-chroot /mnt/gentoo emerge libiconv readline zlib openssl curl git libyaml sqlite libxslt
+chroot /mnt/gentoo emerge libyaml sqlite libxslt ruby puppet
 echo "bash < <(curl -s https://rvm.beginrescueend.com/install/rvm)"| chroot /mnt/gentoo /bin/bash -
 echo "/usr/local/rvm/bin/rvm install ruby-1.8.7 "| chroot /mnt/gentoo sh -
 echo "/usr/local/rvm/bin/rvm use ruby-1.8.7 --default "| chroot /mnt/gentoo sh -
 
 #Installing chef & Puppet
 echo ". /usr/local/rvm/scripts/rvm ; gem install chef --no-ri --no-rdoc"| chroot /mnt/gentoo sh -
-echo ". /usr/local/rvm/scripts/rvm ; gem install puppet --no-ri --no-rdoc"| chroot /mnt/gentoo sh -
-
 
 echo "adding rvm to global bash rc"
-echo "echo '. /usr/local/rvm/scripts/rvm' >> /etc/bash/bash.rc" | chroot /mnt/gentoo sh -
+echo "echo 'source /usr/local/rvm/scripts/rvm' >> /etc/bash/bashrc" | chroot /mnt/gentoo sh -
 
 /bin/cp -f /root/.vbox_version /mnt/gentoo/home/vagrant/.vbox_version
 VBOX_VERSION=$(cat /root/.vbox_version)
-
-#Kernel headers
-chroot /mnt/gentoo emerge linux-headers
 
 #Installing the virtualbox guest additions
 cat <<EOF | chroot /mnt/gentoo /bin/bash -
@@ -176,6 +163,7 @@ EOF
 
 echo "sed -i 's:^DAEMONS\(.*\))$:DAEMONS\1 rc.vboxadd):' /etc/rc.conf" | chroot /mnt/gentoo sh -
 
+# I think grub still needs to be installed at this point....
 exit
 cd /
 umount /mnt/gentoo/{proc,sys,dev}
