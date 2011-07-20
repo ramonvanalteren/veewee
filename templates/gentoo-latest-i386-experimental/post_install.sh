@@ -164,6 +164,13 @@ EOF
 echo "sed -i 's:^DAEMONS\(.*\))$:DAEMONS\1 rc.vboxadd):' /etc/rc.conf" | chroot /mnt/gentoo sh -
 
 # I think grub still needs to be installed at this point....
+echo "Installing grub"
+cat <<GRUBSETUP | chroot /mnt/gentoo grub
+root (hd0,0)
+setup (hd0)
+quit
+GRUBSETUP
+
 exit
 cd /
 umount /mnt/gentoo/{proc,sys,dev}
