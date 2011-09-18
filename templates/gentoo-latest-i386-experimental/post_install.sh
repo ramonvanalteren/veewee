@@ -170,10 +170,22 @@ root (hd0,0)
 setup (hd0)
 quit
 GRUBSETUP
+# genkernel is too dumb to write a grub.conf file
+echo "writing grub.conf"
+mount /boot # in case it isn't
+cat <<GRUBCONF > /mnt/gentoo/boot/grub/grub.conf
+timeout 5
+default 0
+
+title gentoo veewee
+root (hd0,0)
+kernel /kernel root=/dev/sda3 
+GRUBCONF
+
 
 exit
 cd /
 umount /mnt/gentoo/{proc,sys,dev}
 umount /mnt/gentoo
 
-reboot
+#reboot
